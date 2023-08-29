@@ -1,48 +1,49 @@
-
 const form = document.getElementById("inputForm");
-
+const taskInput = document.getElementById("newTask");
+const taskEle = document.querySelector(".todoList"); 
 let todos = [];
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    //console.log("sub");
 
     saveNewTask();
+    renderTask();
+    console.log("sub");
 });
 
-
 const saveNewTask = () => {
-    const todoText = newTask.value;
-    const isEmpty = todoText === '';
-    const repeatedTask = todos.some((todo) => todo.value === todoValue); 
+    const taskValue = taskInput.value;
+    const isEmpty = taskValue === '';
+    const repeatedTask = todos.some((todo) => todo.value === taskValue); 
     if (isEmpty) {
         alert("Please Enter Your New Task")
     } else if (repeatedTask) {
         alert("This Task Already Exists")
-    }  else {
-        const todoText = newTask.value
-
+    } else {
         const todo = {
-            value: todoValue,
+            value: taskValue,
             checked: false,
-            priority: blue
-        }
-        todos.push(todo)
+            color: 'blue',
+        };
+        todos.push(todo);
+        taskInput.value = ''; // Clear the input after adding a task
+        console.log(todos);
     }
-
 }
 
 const renderTask = () => {
-    todos.forEach((todo, idx) => {
-        todosEle.innerHTML +=  //override
-        <div class="todoTask" id="0">
-            <i class="bi bi-circle"></i>
-            <i class="bi bi-check-circle-fill"></i>
-            <p class="taskText">Get Eggs</p>
+    taskEle.innerHTML = ''; // Clear the previous content
+
+    todos.forEach((todo, index) => {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'todoTask';
+        taskDiv.id = index;
+        taskDiv.innerHTML = `
+            <i class="bi ${todo.checked ? 'bi-check-circle-fil' : 'bi-circle'}" style="color: ${todo.color}"></i>
+            <p class="taskText">${todo.value}</p>
             <i class="bi bi-pencil-square"></i>
             <i class="bi bi-x-circle"></i>
-        </div>
-    })
+        `;
+        taskEle.appendChild(taskDiv);
+    });
 }
-
-
