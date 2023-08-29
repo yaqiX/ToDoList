@@ -35,7 +35,6 @@ body {
 }
 header {
   width: 100%;
-
   border-radius: 5px 5px 0 0;
 }
 .header {
@@ -49,7 +48,7 @@ header {
 .addNewEvent {
   width: 100%;
   height: 50px;
-  padding: 0.25rem 0;
+  padding: 0.5rem 0;
 }
 .addNewEvent form {
   display: flex;
@@ -82,7 +81,8 @@ header {
 
 .todoList {
   height: calc(var(--container-height) - var(--header-height));
-  background-color: #fff;
+  /* background-color: #fff; */
+  background-color: transparent;
   padding: 0.5rem;
   border: 1px solid rgb(219, 219, 219);
   overflow: scroll;

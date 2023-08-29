@@ -8,7 +8,6 @@ form.addEventListener('submit', (e) => {
 
     saveNewTask();
     renderTask();
-    console.log("sub");
 });
 
 const saveNewTask = () => {
