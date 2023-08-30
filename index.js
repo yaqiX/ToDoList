@@ -22,16 +22,16 @@ const createTodoItem = (text, checked) => {
     input.classList.add("todo-input");
     input.value = text;
 
-    const editButton = document.createElement("button");
+    const editButton = document.createElement("div");
     editButton.className = "edit-button";
-    editButton.textContent = "Edit";
+    editButton.innerHTML = '<i class="bi bi-pencil-square"></i>';
     editButton.addEventListener("click", () => {
         input.disabled = !input.disabled;
     });
 
-    const deleteButton = document.createElement("button");
+    const deleteButton = document.createElement("div");
     deleteButton.className = "delete-button";
-    deleteButton.textContent = "Delete";
+    deleteButton.innerHTML = "<i class='bi bi-x-circle'></i>";
     deleteButton.addEventListener("click", () => {
         todoList.removeChild(todoItem);
     });
@@ -74,7 +74,7 @@ const saveTodo = () => {
     const newTodoValue = newTodoInput.value;
     const isEmpty = newTodoValue === '';
     // if repeated using some
-    const isRepeated = todos.some((todo) => todo.newTodoValue === newTodoValue);
+    const isRepeated = todos.some((todo) => todo.text === newTodoValue);
     
     if(isEmpty){
         alert("Please Add Your To Do Content");
