@@ -1,126 +1,154 @@
-// El = Element
-const form = document.getElementById('todoform');
-const todoInput = document.getElementById('newtodo');
-const todosListElement = document.getElementById('todos-list');
-//const notificationElement = document.querySelector('.notification');
+const todoForm = document.getElementById("todo-form");
+const newTodoInput = document.getElementById("new-todo-input");
+const todoList = document.getElementById("todo-list");
 
+//const addButton = document.getElementById("addButton");
 
 // make an array of todos
 let todos = [];
-let editTodoId = -1;
+console.log(todos)
+const createTodoItem = (text, checked) => {
+    const todoItem = document.createElement("div");
+    todoItem.className = "todo-item";
 
-// Submit
-form.addEventListener('submit', (e) => {
-    e.preventDefault();  // do not refresh
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.classList.add("todo-checkbox");
+    checkbox.checked = checked; // Set the checked status
 
-    saveTodo();
-    renderTodos();
-});
+    // Input
+    const input = document.createElement("input");
+    input.type = "text";
+    input.classList.add("todo-input");
+    input.value = text;
 
+    const editButton = document.createElement("button");
+    editButton.className = "edit-button";
+    editButton.textContent = "Edit";
+    editButton.addEventListener("click", () => {
+        input.disabled = !input.disabled;
+    });
 
-// Save New Todo
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "delete-button";
+    deleteButton.textContent = "Delete";
+    deleteButton.addEventListener("click", () => {
+        todoList.removeChild(todoItem);
+    });
+
+    input.addEventListener("input", (event) => {
+        todoValue = event.target.value; // Update the todoValue with the new input value
+    });
+
+    todoItem.appendChild(checkbox);
+    todoItem.appendChild(input);
+    todoItem.appendChild(editButton);
+    todoItem.appendChild(deleteButton);
+
+    return todoItem;
+}
+
+console.log(todos)
+
+function updateTodo() {
+    // Clear the existing list
+    todoList.innerHTML = '';
+  
+    // Create and append todo items from the todos array
+    todos.forEach(todo => {
+      const todoItem = createTodoItem(todo.text, todo.checked);
+      todoList.appendChild(todoItem);
+      console.log(todoList, "list")
+    });
+  }
+  
+  
+
+todoForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    saveTodo()
+  });
+  
 const saveTodo = () => {
-    const todoValue = todoInput.value;
-    // if empty
-    const isEmpty = todoValue === '';
+    const newTodoValue = newTodoInput.value;
+    const isEmpty = newTodoValue === '';
     // if repeated using some
-    const isRepeated = todos.some((todo) => todo.todoValue === todoValue);
-    // editToDoId is global
+    const isRepeated = todos.some((todo) => todo.newTodoValue === newTodoValue);
+    
     if(isEmpty){
         alert("Please Add Your To Do Content");
     } else if (isRepeated) {
         alert("This Task Already Exists!")
-    } else if (editTodoId != -1){
-        todos = todos.map((todo, index) => {
-            return {
-                ...todo,
-                value : index === editTodoId ? todoValue : todo.value,
-            }
-        })
-        editTodoId = -1;
     } else {
-        const todo = {
-            value: todoValue,
-            checked: false,
-            color: 'blue'
-        };
-        todos.push(todo);
-        todoInput.value = ''; // clear input
+        const newTodo = {text: newTodoValue, checked: false};
+        todos.push(newTodo);
+        updateTodo();
+        newTodoInput.value = ''; 
+        //console.log(newTodo)
+        localStorage.setItem("todos", JSON.stringify(todos));// clear input
     }
+    
 }
 
-const renderTodos = () => {
-
-    if (todos.length === 0) {
-        todosListElement.innerHTML = 'Hurray! We finished everything!'; 
-        return;
-    }
-    todosListElement.innerHTML = ''; // clear before render
-    todos.forEach((todo, index) => {
-        todosListElement.innerHTML += `
-        <div class="todo" id=${index}>
-          <i 
-            class="bi ${todo.checked ? 'bi-check-circle-fill' : 'bi-circle'}"
-            style="color : ${todo.color}"
-            data-action="check"
-          ></i>
-          <p class="${todo.checked ? 'checked' : ''}" data-action="check">${todo.value}</p>
-          <i class="bi bi-pencil-square" data-action="edit"></i>
-          <i class="bi bi-trash" data-action="delete"></i>
-        </div>
-        `;
-        // console.log(todosListElement.innerHTML)
-    });
-}
-
-// Event listener for the "Check" button
-todosListElement.addEventListener('click', (e) => {
-    const target = e.target;
-    if (target.dataset.action === 'check') {
-      const todoId = Number(target.closest('.todo').id);
-      checkTodo(todoId);
+todoList.addEventListener("click", event => {
+    const target = event.target;
+  
+    if (target.classList.contains("todo-checkbox")) {
+      const todoItem = target.closest(".todo-item");
+      const index = todos.indexOf(todoItem);
+      todos[index].checked = target.checked; // Update the checked status
+      localStorage.setItem("todos", JSON.stringify(todos));
     }
   });
   
-  // Event listener for the "Edit" button
-  todosListElement.addEventListener('click', (e) => {
-    const target = e.target;
-    if (target.dataset.action === 'edit') {
-      const todoId = Number(target.closest('.todo').id);
-      editTodo(todoId);
-    }
-  });
-  
-  // Event listener for the "Delete" button
-  todosListElement.addEventListener('click', (e) => {
-    const target = e.target;
-    if (target.dataset.action === 'delete') {
-      const todoId = Number(target.closest('.todo').id);
-      deleteTodo(todoId);
-    }
-  });
-  
-  // checkTodo
-  const checkTodo = (todoId) => {
-    todos = todos.map((todo, index) => {
-      return {
-        ...todo,
-        checked: index === todoId ? !todo.checked : todo.checked
-      };
-    });
-    renderTodos();
-  };
-  
-  // editTodo
-  const editTodo = (todoId) => {
-    todoInput.value = todos[todoId].value;
-    editTodoId = todoId;
-  };
 
-
-const deleteTodo = (todoId) => {
-    todos.splice(todoId, 1); // Remove at the specified index
-    editTodoId = -1;
-    renderTodos(); // re-render
-}
+// edit event listener
+todoList.addEventListener("click", event => {
+    const target = event.target;
   
+    if (target.classList.contains("edit-button")) {
+        const todoItem = target.parentElement;
+        const input = todoItem.querySelector(".todo-input");
+        if (input.disabled) {   
+            input.disabled = false;
+        } else{
+            input.disabled = true;
+        }
+        input.disabled = !input.disabled;
+         //switch
+        console.log(input.disabled,"bool")
+        const index = todos.indexOf(todoItem);
+        if (!input.disabled) {
+        // Enable editing mode
+            //input.focus();
+            input.addEventListener("input", () => {
+                todos[index].text = input.value; // Update the todo in the array
+                localStorage.setItem("todos", JSON.stringify(todos));
+            });
+        } else {
+        // Disable editing mode
+            input.removeEventListener("input", () => {});
+        }
+    }
+});
+  
+  // Event listener for delete buttons
+todoList.addEventListener("click", event => {
+    const target = event.target;
+    if (target.classList.contains("delete-button")) {
+        const todoItem = target.parentElement;
+        const index = todos.indexOf(todoItem);
+        todos.splice(index, 1); // Remove the todo from the array
+        updateTodo();
+        // Save todos to local storage
+        localStorage.setItem("todos", JSON.stringify(todos));
+    }
+});
+  
+  // Initial display of todos from local storage
+if (localStorage.getItem("todos")) {
+    todos = JSON.parse(localStorage.getItem("todos"));
+    console.log("todos",todos)
+    updateTodo();
+  }
