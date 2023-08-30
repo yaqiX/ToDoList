@@ -7,6 +7,7 @@ const todosListElement = document.getElementById('todos-list');
 
 // make an array of todos
 let todos = [];
+let editTodoId = -1;
 
 // Submit
 form.addEventListener('submit', (e) => {
@@ -24,11 +25,19 @@ const saveTodo = () => {
     const isEmpty = todoValue === '';
     // if repeated using some
     const isRepeated = todos.some((todo) => todo.todoValue === todoValue);
-
+    // editToDoId is global
     if(isEmpty){
         alert("Please Add Your To Do Content");
     } else if (isRepeated) {
         alert("This Task Already Exists!")
+    } else if (editTodoId != -1){
+        todos = todos.map((todo, index) => {
+            return {
+                ...todo,
+                value : index === editTodoId ? todoValue : todo.value,
+            }
+        })
+        editTodoId = -1;
     } else {
         const todo = {
             value: todoValue,
@@ -55,6 +64,47 @@ const renderTodos = () => {
           <i class="bi bi-trash" data-action="delete"></i>
         </div>
         `;
-        console.log(todosListElement.innerHTML)
+        // console.log(todosListElement.innerHTML)
     });
 }
+
+todosListElement.addEventListener('click', (e) => {
+    const target = e.target;
+    const parentElement = target.parentNode;
+
+    if(parentElement.className !== 'todo') return;
+    //console.log(parentElement);
+    const todo = parentElement;
+    const todoId = Number(todo.id);
+
+    const action = target.dataset.action;
+    action === "check" && checkTodo(todoId)
+    action === "edit" && editTodo(todoId)
+    action === "delete" && deleteTodo(todoId)
+    //console.log(todoId, action);
+});
+
+// checkTodo
+const checkTodo = (todoId) => {
+    todos = todos.map((todo, index) => {
+        return{
+            ...todo,
+            checked : index === todoId ? !todo.checked : todo.checked
+        }
+    })
+    renderTodos();
+}
+
+// editTodo
+const editTodo = (todoId) => {
+    todoInput.value = todos[todoId].value;
+    editTodoId = todoId;
+}
+
+const deleteTodo = (todoId) => {
+    todos.splice(todoId, 1); // Remove at the specified index
+    editTodoId = -1;
+    renderTodos(); // re-render
+    //localStorage.setItem('todos', JSON.stringify(todos));
+}
+  
