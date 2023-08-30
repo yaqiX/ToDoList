@@ -50,6 +50,11 @@ const saveTodo = () => {
 }
 
 const renderTodos = () => {
+
+    if (todos.length === 0) {
+        todosListElement.innerHTML = 'Hurray! We finished everything!'; 
+        return;
+    }
     todosListElement.innerHTML = ''; // clear before render
     todos.forEach((todo, index) => {
         todosListElement.innerHTML += `
@@ -68,43 +73,54 @@ const renderTodos = () => {
     });
 }
 
+// Event listener for the "Check" button
 todosListElement.addEventListener('click', (e) => {
     const target = e.target;
-    const parentElement = target.parentNode;
-
-    if(parentElement.className !== 'todo') return;
-    //console.log(parentElement);
-    const todo = parentElement;
-    const todoId = Number(todo.id);
-
-    const action = target.dataset.action;
-    action === "check" && checkTodo(todoId)
-    action === "edit" && editTodo(todoId)
-    action === "delete" && deleteTodo(todoId)
-    //console.log(todoId, action);
-});
-
-// checkTodo
-const checkTodo = (todoId) => {
+    if (target.dataset.action === 'check') {
+      const todoId = Number(target.closest('.todo').id);
+      checkTodo(todoId);
+    }
+  });
+  
+  // Event listener for the "Edit" button
+  todosListElement.addEventListener('click', (e) => {
+    const target = e.target;
+    if (target.dataset.action === 'edit') {
+      const todoId = Number(target.closest('.todo').id);
+      editTodo(todoId);
+    }
+  });
+  
+  // Event listener for the "Delete" button
+  todosListElement.addEventListener('click', (e) => {
+    const target = e.target;
+    if (target.dataset.action === 'delete') {
+      const todoId = Number(target.closest('.todo').id);
+      deleteTodo(todoId);
+    }
+  });
+  
+  // checkTodo
+  const checkTodo = (todoId) => {
     todos = todos.map((todo, index) => {
-        return{
-            ...todo,
-            checked : index === todoId ? !todo.checked : todo.checked
-        }
-    })
+      return {
+        ...todo,
+        checked: index === todoId ? !todo.checked : todo.checked
+      };
+    });
     renderTodos();
-}
-
-// editTodo
-const editTodo = (todoId) => {
+  };
+  
+  // editTodo
+  const editTodo = (todoId) => {
     todoInput.value = todos[todoId].value;
     editTodoId = todoId;
-}
+  };
+
 
 const deleteTodo = (todoId) => {
     todos.splice(todoId, 1); // Remove at the specified index
     editTodoId = -1;
     renderTodos(); // re-render
-    //localStorage.setItem('todos', JSON.stringify(todos));
 }
   
