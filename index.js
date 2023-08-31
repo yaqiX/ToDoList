@@ -3,6 +3,22 @@ const newTodoInput = document.getElementById("new-todo-input");
 const todoList = document.getElementById("todo-list");
 
 //const addButton = document.getElementById("addButton");
+const changeBgButton = document.getElementById("changeBgButton");
+const bodyToChange = document.querySelector("body"); 
+
+backgrounds = [
+  "./img/background6.jpg",
+  "./img/background1.jpg",
+  "./img/background2.jpg",
+  "./img/background3.jpg",
+  "./img/background4.jpg",
+  "./img/background5.jpg",  
+]; 
+
+let currentBgIndex = 0;
+
+
+
 
 // make an array of todos
 let todos = [];
@@ -152,3 +168,12 @@ if (localStorage.getItem("todos")) {
     console.log("todos",todos)
     updateTodo();
   }
+
+
+changeBgButton.addEventListener("click", () => {
+    currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
+    const newBg = backgrounds[currentBgIndex];
+    bodyToChange.style.backgroundImage = `url(${newBg})`;
+
+});
+  

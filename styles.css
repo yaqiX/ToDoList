@@ -10,7 +10,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-image: url('./background.jpg');
+    background-image: url('./img/background6.jpg');
     background-size: cover;
 }
   
@@ -22,9 +22,11 @@ body {
     border-radius: 10px;
 }
 
-h2 {
+h3 {
     text-align: center;
-    
+    color: #fff;
+    font-weight: bolder;
+    font-size: larger;
 }
 .new-todo {
     height: 40px;
@@ -38,12 +40,12 @@ h2 {
 .new-todo form input {
     flex: 1;
     height: 40px;
-    background-color: black;
-    opacity: 0.5;
+    background-color: rgb(0,0,0,0.3);
     border: none;
     border-right: 0px;
     outline: transparent;
     padding-left: 0.5rem;
+    margin-left: 5%;
     font-size: 1rem;
     color: #fff;
     border-radius: 5px;
@@ -97,7 +99,7 @@ h2 {
     margin-right: 10px;
     padding-left: 10px;
     font-size: 1rem;
-    color: white;
+    color: whitesmoke;
     
 }
 
@@ -105,11 +107,25 @@ h2 {
     color: white;
 }
 
-
+.edit-button :hover {
+    color: lightgreen;
+}
 .delete-button {
     font-weight: bolder;
     border-radius: 3px;
-    color: #fff;
+    color: white;
 }
 
+.delete-button :hover {
+    color: red;
+}
+
+#changeBgButton {
+    border-radius: 10px;
+    margin-top: 20px;
+    height: 40px;
+    color: #fff;
+    font-weight: bolder;
+    background-color: rgba(0, 162, 255, 0.588)
+}
 
