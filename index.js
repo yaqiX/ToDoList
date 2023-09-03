@@ -21,7 +21,10 @@ let currentBgIndex = 0;
 
 
 // make an array of todos
-let todos = [];
+let todos = [] ;
+
+
+
 console.log(todos)
 const createTodoItem = (text, checked) => {
     const todoItem = document.createElement("div");
@@ -32,17 +35,37 @@ const createTodoItem = (text, checked) => {
     checkbox.classList.add("todo-checkbox");
     checkbox.checked = checked; // Set the checked status
 
+    checkbox.addEventListener("click", (e) => {
+        todoItem.checked = !todoItem.checked;
+    })
+
+
     // Input
     const input = document.createElement("input");
     input.type = "text";
     input.classList.add("todo-input");
     input.value = text;
 
+    input.addEventListener("input", (event) => {
+        todoValue = event.target.value;
+    });
+
     const editButton = document.createElement("div");
     editButton.className = "edit-button";
     editButton.innerHTML = '<i class="bi bi-pencil-square"></i>';
-    editButton.addEventListener("click", () => {
-        input.disabled = !input.disabled;
+    editButton.addEventListener("click", (e) => {
+
+    input.disabled = !input.disabled;
+        if (!input.disabled) {
+                input.addEventListener("input", () => {
+                    todoItem.text = input.value;
+                    console.log("edit");
+                });
+            } else {
+            // Disable editing mode
+                input.removeEventListener("input", () => {});
+            }
+
     });
 
     const deleteButton = document.createElement("div");
@@ -50,10 +73,7 @@ const createTodoItem = (text, checked) => {
     deleteButton.innerHTML = "<i class='bi bi-x-circle'></i>";
     deleteButton.addEventListener("click", () => {
         todoList.removeChild(todoItem);
-    });
-
-    input.addEventListener("input", (event) => {
-        todoValue = event.target.value; // Update the todoValue with the new input value
+        console.log("delete");
     });
 
     todoItem.appendChild(checkbox);
@@ -66,7 +86,7 @@ const createTodoItem = (text, checked) => {
 
 console.log(todos)
 
-function updateTodo() {
+const updateTodo = () => {
     // Clear the existing list
     todoList.innerHTML = '';
   
@@ -74,16 +94,16 @@ function updateTodo() {
     todos.forEach(todo => {
       const todoItem = createTodoItem(todo.text, todo.checked);
       todoList.appendChild(todoItem);
-      console.log(todoList, "list")
+      // console.log(todoList, "list")
     });
-  }
-  
-  
+}
+
 
 todoForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    saveTodo()
+    saveTodo();
+    updateTodo();
   });
   
 const saveTodo = () => {
@@ -102,74 +122,11 @@ const saveTodo = () => {
         updateTodo();
         newTodoInput.value = ''; 
         //console.log(newTodo)
-        localStorage.setItem("todos", JSON.stringify(todos));// clear input
+        //localStorage.setItem("todos", JSON.stringify(todos));// clear input
     }
     
 }
-
-todoList.addEventListener("click", event => {
-    const target = event.target;
-  
-    if (target.classList.contains("todo-checkbox")) {
-      const todoItem = target.closest(".todo-item");
-      const index = todos.indexOf(todoItem);
-      todos[index].checked = target.checked; // Update the checked status
-      localStorage.setItem("todos", JSON.stringify(todos));
-    }
-  });
-  
-
-// edit event listener
-todoList.addEventListener("click", event => {
-    const target = event.target;
-  
-    if (target.classList.contains("edit-button")) {
-        const todoItem = target.parentElement;
-        const input = todoItem.querySelector(".todo-input");
-        if (input.disabled) {   
-            input.disabled = false;
-        } else{
-            input.disabled = true;
-        }
-        input.disabled = !input.disabled;
-         //switch
-        console.log(input.disabled,"bool")
-        const index = todos.indexOf(todoItem);
-        if (!input.disabled) {
-        // Enable editing mode
-            //input.focus();
-            input.addEventListener("input", () => {
-                todos[index].text = input.value; // Update the todo in the array
-                localStorage.setItem("todos", JSON.stringify(todos));
-            });
-        } else {
-        // Disable editing mode
-            input.removeEventListener("input", () => {});
-        }
-    }
-});
-  
-  // Event listener for delete buttons
-todoList.addEventListener("click", event => {
-    const target = event.target;
-    if (target.classList.contains("delete-button")) {
-        const todoItem = target.parentElement;
-        const index = todos.indexOf(todoItem);
-        todos.splice(index, 1); // Remove the todo from the array
-        updateTodo();
-        // Save todos to local storage
-        localStorage.setItem("todos", JSON.stringify(todos));
-    }
-});
-  
-  // Initial display of todos from local storage
-if (localStorage.getItem("todos")) {
-    todos = JSON.parse(localStorage.getItem("todos"));
-    console.log("todos",todos)
-    updateTodo();
-  }
-
-
+       
 changeBgButton.addEventListener("click", () => {
     currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
     const newBg = backgrounds[currentBgIndex];
